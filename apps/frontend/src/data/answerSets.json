@@ -1,0 +1,35 @@
+[
+  {
+    "id": "jawaban_l_01",
+    "template_id": "template_l_shape",
+    "title": "Set Jawaban Huruf L #1",
+    "words": [
+      { "no": 1, "jawaban": "LAMPU" },
+      { "no": 2, "jawaban": "ULUNG" },
+      { "no": 3, "jawaban": "TEMA" },
+      { "no": 4, "jawaban": "MIMOSA" }
+    ]
+  },
+  {
+    "id": "jawaban_l_02",
+    "template_id": "template_l_shape",
+    "title": "Set Jawaban Huruf L #2",
+    "words": [
+      { "no": 1, "jawaban": "BUNGA" },
+      { "no": 2, "jawaban": "AKHIR" },
+      { "no": 3, "jawaban": "LENA" },
+      { "no": 4, "jawaban": "NINDIA" }
+    ]
+  },
+  {
+    "id": "jawaban_plus_01",
+    "template_id": "template_plus",
+    "title": "Set Jawaban Simbol Plus #1",
+    "words": [
+      { "no": 1, "jawaban": "LANTAI" },
+      { "no": 2, "jawaban": "RANTAI" },
+      { "no": 3, "jawaban": "BIR" },
+      { "no": 4, "jawaban": "PIKA" }
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "template_l_shape",
+    "name": "Template Huruf L",
+    "gridSize": [7, 7],
+    "words": [
+      { "no": 1, "arah": "mendatar", "start": [0, 0], "length": 5 },
+      { "no": 2, "arah": "menurun", "start": [0, 4], "length": 5 },
+      { "no": 3, "arah": "mendatar", "start": [2, 0], "length": 4 },
+      { "no": 4, "arah": "menurun", "start": [0, 2], "length": 6 }
+    ]
+  },
+  {
+    "id": "template_plus",
+    "name": "Template Simbol Plus",
+    "gridSize": [6, 6],
+    "words": [
+      { "no": 1, "arah": "mendatar", "start": [2, 0], "length": 6 },
+      { "no": 2, "arah": "menurun", "start": [0, 2], "length": 6 },
+      { "no": 3, "arah": "mendatar", "start": [0, 0], "length": 3 },
+      { "no": 4, "arah": "mendatar", "start": [5, 1], "length": 4 }
+    ]
+  }
+]
