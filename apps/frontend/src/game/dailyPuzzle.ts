@@ -23,7 +23,7 @@ export const GAME_CONFIG = {
   autoAdvance: false,
   maxAttempts: 6,
   showHints: true,
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "https://dgdr4x15-4000.asse.devtunnels.ms"
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL 
 };
 
 // Cache for loaded data
@@ -31,14 +31,30 @@ let templatesCache: TTSTemplate[] | null = null;
 let kbbiWordsCache: string[] | null = null;
 
 export async function getTtsTemplates(): Promise<TTSTemplate[]> {
-  if (templatesCache) return templatesCache;
+  if (templatesCache) {
+    console.log('Using cached templates');
+    return templatesCache;
+  }
+
+  console.log('Fetching templates from:', `${GAME_CONFIG.apiBaseUrl}/api/puzzle-templates`);
+  const startTime = Date.now();
 
   try {
-    const response = await fetch(`${GAME_CONFIG.apiBaseUrl}/api/puzzle-templates`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const response = await fetch(`${GAME_CONFIG.apiBaseUrl}/api/puzzle-templates`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
     const templatesData = await response.json();
+    const fetchTime = Date.now() - startTime;
+    console.log(`Templates fetched in ${fetchTime}ms`);
 
     // Convert backend format to TTSTemplate format
     const templates: TTSTemplate[] = Object.entries(templatesData).map(([key, data]: [string, any]) => ({
@@ -60,7 +76,9 @@ export async function getTtsTemplates(): Promise<TTSTemplate[]> {
     templatesCache = templates;
     return templates;
   } catch (error) {
-    console.error('Failed to load TTS templates:', error);
+    const fetchTime = Date.now() - startTime;
+    console.error(`Failed to load TTS templates after ${fetchTime}ms:`, error);
+    // Return empty array instead of throwing to prevent app crash
     return [];
   }
 }
@@ -78,8 +96,8 @@ export async function getKbbiWords(): Promise<string[]> {
     return kbbiWordsCache;
   } catch (error) {
     console.error('Failed to load KBBI words:', error);
-    kbbiWordsCache = [];
-    return kbbiWordsCache;
+    // Return empty array instead of throwing to prevent app crash
+    return [];
   }
 }
 
@@ -367,6 +385,7 @@ export async function getPuzzleTemplateById(id: number) {
     return templates[id.toString()] || null;
   } catch (error) {
     console.error('Failed to load puzzle template:', error);
+    // Return null instead of throwing to prevent app crash
     return null;
   }
 }

@@ -201,12 +201,19 @@ function computeKeyboardState(guesses: GuessResult[]): Record<string, KatlaTileS
 export default function MainScene() {
   const [dailyPuzzle, setDailyPuzzle] = useState<DailyPuzzle | null>(null);
   const [templates, setTemplates] = useState<TTSTemplate[] | null>(null);
+  const [isInstructionsMinimized, setIsInstructionsMinimized] = useState(true);
 
   useEffect(() => {
-    getDailyPuzzle().then(setDailyPuzzle);
+    getDailyPuzzle().then(setDailyPuzzle).catch((error) => {
+      console.error('Failed to load daily puzzle:', error);
+      setDailyPuzzle(null);
+    });
   }, []);
   useEffect(() => {
-    getTtsTemplates().then(setTemplates);
+    getTtsTemplates().then(setTemplates).catch((error) => {
+      console.error('Failed to load templates:', error);
+      setTemplates([]);
+    });
   }, []);
 
   const template = useMemo<TTSTemplate | null>(() => {
@@ -348,7 +355,7 @@ export default function MainScene() {
   }, [activeEntryNo, template]);
 
   useEffect(() => {
-    if (!activeEntry || !activeEntryLength) {
+    if (!activeEntry || !activeEntryLength || !template) {
       setKatlaGuesses([]);
       setCurrentGuess("");
       setKeyStatuses({});
@@ -356,7 +363,28 @@ export default function MainScene() {
     }
     const storedGuesses = entryAttempts[activeEntry.no] ?? [];
     setKatlaGuesses(storedGuesses);
-    setCurrentGuess("");
+
+    // Pre-fill current guess with letters from the board
+    if (!solvedEntries[activeEntry.no] && !failedEntries[activeEntry.no]) {
+      const slot = template.words.find((w) => w.no === activeEntry.no);
+      if (slot) {
+        let prefilledGuess = "";
+        for (let i = 0; i < slot.length; i++) {
+          const row = slot.arah === "mendatar" ? slot.start[0] : slot.start[0] + i;
+          const col = slot.arah === "mendatar" ? slot.start[1] + i : slot.start[1];
+          if (row >= 0 && row < boardState.length && col >= 0 && col < boardState[row].length) {
+            const letter = boardState[row][col];
+            prefilledGuess += letter || "";
+          } else {
+            prefilledGuess += "";
+          }
+        }
+        setCurrentGuess(prefilledGuess);
+      }
+    } else {
+      setCurrentGuess("");
+    }
+
     setKeyStatuses(computeKeyboardState(storedGuesses));
     if (solvedEntries[activeEntry.no]) {
       setKatlaMessage("Slot ini sudah terisi. Lanjutkan ke kata lainnya.");
@@ -365,7 +393,7 @@ export default function MainScene() {
     } else {
       setKatlaMessage(`Tebak kata ${activeEntryLength} huruf.`);
     }
-  }, [activeEntry, activeEntryLength, entryAttempts, failedEntries, solvedEntries]);
+  }, [activeEntry, activeEntryLength, entryAttempts, failedEntries, solvedEntries, template, boardState]);
 
   const handleSelectEntry = useCallback(
     (entry: JawabanHarianEntry) => {
@@ -706,16 +734,28 @@ const katlaHeading = activeSlot
           </p>
         </header>
 
-        <section className="main-scene__card">
-          <h2>Cara Bermain</h2>
-          <ul className="main-scene__hint-list">
-            {hints.map((hint) => (
-              <li key={hint.title}>
-                <span className="main-scene__hint-title">{hint.title}</span>
-                <p>{hint.description}</p>
-              </li>
-            ))}
-          </ul>
+        <section className={`main-scene__card ${isInstructionsMinimized ? 'main-scene__card--minimized' : ''}`}>
+          <div className="main-scene__card-header">
+            <h2>Cara Bermain</h2>
+            <button
+              type="button"
+              className="main-scene__card-toggle"
+              onClick={() => setIsInstructionsMinimized(!isInstructionsMinimized)}
+              aria-label={isInstructionsMinimized ? "Tampilkan cara bermain" : "Sembunyikan cara bermain"}
+            >
+              {isInstructionsMinimized ? "+" : "−"}
+            </button>
+          </div>
+          {!isInstructionsMinimized && (
+            <ul className="main-scene__hint-list">
+              {hints.map((hint) => (
+                <li key={hint.title}>
+                  <span className="main-scene__hint-title">{hint.title}</span>
+                  <p>{hint.description}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="main-scene__playground">
