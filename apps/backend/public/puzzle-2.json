@@ -1,0 +1,35 @@
+{
+  "id": 1,
+  "rows": 4,
+  "cols": 6,
+  "grid": [
+    [1, 1, 1, 1, 1, 1],
+    [0, 0, 1, 0, 0, 0],
+    [0, 1, 1, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1]
+  ],
+  "answers": [
+    {
+      "direction": "across",
+      "start": [0, 0],
+      "word": "SEMPAX"
+    },
+    {
+      "direction": "across",
+      "start": [2, 1],
+      "word": "OTAK"
+    },
+    {
+      "direction": "down",
+      "start": [0, 2],
+      "word": "MATI"
+    },
+    {
+      "direction": "across",
+      "start": [3, 2],
+      "word": "IKAN"
+    }
+  
+  ]
+
+}
